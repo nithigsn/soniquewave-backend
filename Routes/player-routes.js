@@ -1,5 +1,5 @@
 const express = require('express');
-const {signUp,signIn} =require('../Controllers/player-controller');
+const {signUp,signIn, playList, userDetails} =require('../Controllers/player-controller');
 
 const playerRouter=express.Router();
 
@@ -9,8 +9,16 @@ const playerRouter=express.Router();
 // C -> Create - POST
 playerRouter.post('/signup',signUp);
 
-//R - > Read - GET
-playerRouter.get('/signin',signIn);
+//  POST
+playerRouter.post('/signin',signIn);
+
+// POST
+playerRouter.post('/playlist',playList);
+
+// R -> Read GET
+playerRouter.get('/:id',userDetails);
+
+
 
 
 

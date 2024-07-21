@@ -6,7 +6,7 @@ const playerSchema = new mongoose.Schema({
     name:{type:String,required:true},
     email:{type:String,required:true,unique:true},
     username: { type: String, required: true, unique: true },
-    password: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     playlists: [{
         playlistname: { type: String, required: true },
         songs: [{ name: { type: String, required: true } }]

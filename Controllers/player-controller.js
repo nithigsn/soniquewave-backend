@@ -1,5 +1,5 @@
 const PlayerModel = require('../Models/player-model');
-const bcrypt=require('bcrypt');
+const bcrypt = require('bcrypt');
 
 
 //Controller Logics Below
@@ -10,33 +10,35 @@ async function signUp(req, res) {
         const payload = req.body;
 
         const saltRounds = 10; // The number of salt rounds for bcrypt
-         // Hash the name, username, email, and password
-         const hashedName = await bcrypt.hash(payload.name, saltRounds);
-         const hashedUsername = await bcrypt.hash(payload.username, saltRounds);
-         const hashedEmail = await bcrypt.hash(payload.email, saltRounds);
-         const hashedPassword = await bcrypt.hash(payload.password, saltRounds);
+        // Hash password
+        const hashedPassword = await bcrypt.hash(payload.password, saltRounds);
 
         const obj = {
-            name: hashedName,
-            email: hashedEmail,
-            username: hashedUsername,
+            name: payload.name,
+            email: payload.email,
+            username: payload.username,
             password: hashedPassword
         };
 
         const newUser = await PlayerModel.create(obj);
+
         res.json({
             status: true,
-            msg: "User Created Successfully"
+            msg: "User Created Successfully",
+            data: {
+                id: newUser._id // Ensure 'newUser' is used here to access the created user's ID
+            }
         });
-    }
-    catch (error) {
+    } catch (error) {
         res.json({
             status: false,
             msg: 'Error',
-            data: error
+            data: error.message // Send only the error message
         });
     }
 }
+
+
 
 
 async function signIn(req, res) {
@@ -44,20 +46,10 @@ async function signIn(req, res) {
         const { username, password } = req.body;
 
         // Find the user by username
-        const user = await PlayerModel.findOne();
-        const users = await PlayerModel.find({});
-        
-        let userFound = false;
-        for (let i = 0; i < users.length; i++) {
-            const user = users[i];
-            const isUsernameMatch = await bcrypt.compare(username, user.username);
-            if (isUsernameMatch) {
-                userFound = user;
-                break;
-            }
-        }
+        const user = await PlayerModel.findOne({ username });
 
-        if (!userFound) {
+        // If user is not found
+        if (!user) {
             return res.status(400).json({
                 status: false,
                 msg: 'Username or password is incorrect'
@@ -65,7 +57,7 @@ async function signIn(req, res) {
         }
 
         // Compare the provided password with the stored hashed password
-        const isPasswordMatch = await bcrypt.compare(password, userFound.password);
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             return res.status(400).json({
                 status: false,
@@ -78,8 +70,8 @@ async function signIn(req, res) {
             status: true,
             msg: 'Sign in successful',
             data: {
-                id: userFound._id,
-                username: userFound.username,
+                id: user._id,
+                username: user.username,
                 // You can add more user details if needed
             }
         });
@@ -93,6 +85,65 @@ async function signIn(req, res) {
 }
 
 
+//CRUD: u -> Update
 
 
-module.exports= {signUp,signIn};
+async function playList(req, res) {
+    try {
+        const { _id, playlistname } = req.body;
+
+        // Add a new playlist to the specified player's playlists array
+        const result = await PlayerModel.updateOne(
+            { _id: _id },
+            { $push: { playlists: { playlistname: playlistname, songs: [] } } }
+        );
+
+        const status = result.modifiedCount === 1;
+
+        res.json({
+            status: status,
+            msg: status ? "success" : "fail"
+        });
+    } catch (error) {
+        res.json({
+            status: false,
+            msg: 'error',
+            data: error
+        });
+    }
+}
+
+
+//CRUD : R -> Read
+
+async function userDetails(req, res) {
+    try {
+        // Get the id from request parameters
+        const condition = { _id: req.params.id };
+
+        // Find the player with the given id
+        const result = await PlayerModel.findOne(condition);
+
+        // Check if the result is not null
+        const status = result !== null;
+
+        // Respond with the appropriate status and data
+        res.json({
+            status: status,
+            msg: status ? "true" : "false",
+            data: result
+        });
+    } catch (error) {
+        // Handle any errors that occurred during the process
+        res.json({
+            status: false,
+            msg: 'error',
+            data: error
+        });
+    }
+}
+
+
+
+
+module.exports = { signUp, signIn, playList, userDetails };
