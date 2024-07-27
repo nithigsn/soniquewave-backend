@@ -144,6 +144,32 @@ async function userDetails(req, res) {
 }
 
 
+async function updateDetails(req, res) {
+    try {
+        const { _id, about } = req.body;
+
+        // Update the about field of the specified player's document
+        const result = await PlayerModel.updateOne(
+            { _id: _id },
+            { $set: { about: about } }
+        );
+        
+        const status = result.modifiedCount === 1;
+
+        res.json({
+            status: status,
+            msg: status ? "Success" : "Failed"
+        });
+    } catch (error) {
+        res.json({
+            status: false,
+            msg: "Error",
+            data: error.message
+        });
+    }
+}
 
 
-module.exports = { signUp, signIn, playList, userDetails };
+
+
+module.exports = { signUp, signIn, playList, userDetails ,updateDetails };
