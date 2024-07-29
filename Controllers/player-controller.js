@@ -10,6 +10,7 @@ async function signUp(req, res) {
         const payload = req.body;
 
         const saltRounds = 10; // The number of salt rounds for bcrypt
+        
         // Hash password
         const hashedPassword = await bcrypt.hash(payload.password, saltRounds);
 

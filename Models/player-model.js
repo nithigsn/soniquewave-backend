@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 
 //Create Schema
 const playerSchema = new mongoose.Schema({
-    name:{type:String,required:true},
-    email:{type:String,required:true,unique:true},
-    about:{type:String},
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    about: { type: String },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     playlists: [{
@@ -18,7 +18,7 @@ const playerSchema = new mongoose.Schema({
 });
 
 //Create Model
-const PlayerModel=mongoose.model('Player',playerSchema);
+const PlayerModel = mongoose.model('Player', playerSchema);
 
 
 module.exports = PlayerModel;
