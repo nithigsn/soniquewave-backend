@@ -26,5 +26,7 @@ app.use(bodyParser.json());
 app.use('/player',playerRouter);
 
 
+
+
 //exports
 module.exports=app;
