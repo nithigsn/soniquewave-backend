@@ -21,6 +21,14 @@ playerRouter.post('/update',updateDetails)
 playerRouter.get('/:id',userDetails);
 
 
+playerRouterRouter.get('/All', (req, res) => {
+    res.json({
+        status: true,
+        msg: 'Endpoint /All is working'
+    });
+});
+
+
 
 
 
