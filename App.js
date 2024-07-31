@@ -26,6 +26,14 @@ app.use(bodyParser.json());
 app.use('/player',playerRouter);
 
 
+//To Check End Point is Working
+app.use('/all',(req,res)=>{
+    res.json({
+        msg:"working"
+    })
+})
+
+
 
 
 //exports
