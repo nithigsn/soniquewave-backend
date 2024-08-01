@@ -1,5 +1,5 @@
 const PlayerModel = require('../Models/player-model');
-const bcrypt = require('bcrypt');
+
 
 
 //Controller Logics Below
@@ -9,16 +9,16 @@ async function signUp(req, res) {
     try {
         const payload = req.body;
 
-        const saltRounds = 10; // The number of salt rounds for bcrypt
+     // The number of salt rounds for bcrypt
         
         // Hash password
-        const hashedPassword = await bcrypt.hash(payload.password, saltRounds);
+   
 
         const obj = {
             name: payload.name,
             email: payload.email,
             username: payload.username,
-            password: hashedPassword
+            password: payload.password
         };
 
         const newUser = await PlayerModel.create(obj);
@@ -57,8 +57,8 @@ async function signIn(req, res) {
             });
         }
 
-        // Compare the provided password with the stored hashed password
-        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        // Compare the provided password with password
+        const isPasswordMatch = await compare(password, user.password);
         if (!isPasswordMatch) {
             return res.status(400).json({
                 status: false,
