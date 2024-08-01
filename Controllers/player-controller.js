@@ -8,12 +8,7 @@ const PlayerModel = require('../Models/player-model');
 async function signUp(req, res) {
     try {
         const payload = req.body;
-
-     // The number of salt rounds for bcrypt
         
-        // Hash password
-   
-
         const obj = {
             name: payload.name,
             email: payload.email,
